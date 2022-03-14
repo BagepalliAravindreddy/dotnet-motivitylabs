@@ -1,3 +1,4 @@
+ARG MYVAR=no
 #FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
 WORKDIR /app
@@ -50,7 +51,7 @@ RUN dotnet sonarscanner end
 FROM build AS sonar-no
 COPY --from=build /src/EmployeeProject/ /src/EmployeeProject
 
-FROM sonar-${boolvalue} as build
+FROM sonar-${MYVAR} as build
 
 FROM build AS publish
 RUN dotnet publish "EmployeeProject.csproj" -c Release -o /app --no-restore
