@@ -34,6 +34,7 @@ RUN dotnet sonarscanner begin \
     /name:testimplementation \
     /d:sonar.host.url=http://3.109.121.132:9000/ \
     /d:sonar.branch.name=dindlocaldb \
+     /d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3 \
 	/d:sonar.coverageReportPaths="coverage/SonarQube.xml"
 
 ## Run dotnet test setting the output on the /coverage folder
