@@ -10,7 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["EmployeeProject.csproj", "EmployeeProject/"]
 
-ARG sonarscan=no
+ARG sonarscan=yes
 RUN dotnet restore "EmployeeProject/EmployeeProject.csproj"
 COPY  . "EmployeeProject/"
 WORKDIR "/src/EmployeeProject"
