@@ -20,10 +20,21 @@ RUN pwd \
     && dotnet tool install --local --version 6.2.2 Swashbuckle.AspNetCore.Cli \
     && find / -name dotnet-tools.json \
     && cat /src/EmployeeProject/.config/dotnet-tools.json
-    
+ 
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
-RUN dotnet tool install -g dotnet-sonarscanner --version 5.5.3 && dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.1.1 
-ENV PATH "${PATH}:/root/.dotnet/tools" 
+RUN apt-get update && apt-get install -y openjdk-11-jdk zip
+# prepare folder for sonar scanner download
+RUN mkdir /downloads/sonarqube -p
+RUN cd /downloads/sonarqube
+# download and extract scanner tool to /opt/sonar-scanner
+RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip
+RUN unzip sonar-scanner-cli-4.2.0.1873-linux.zip
+RUN mv sonar-scanner-4.2.0.1873-linux /opt/sonar-scanner
+
+# install dotnet specific scanner as a global tool
+RUN dotnet tool install -g dotnet-sonarscanner
+RUN dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool 
+ENV PATH "${PATH}:/opt/sonar-scanner/bin:/root/.dotnet/tools" 
 RUN if [ "$sonarscan" = "yes" ] ; then \
 	dotnet sonarscanner begin \
 	/k:testimplementation \
