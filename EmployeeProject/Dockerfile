@@ -1,4 +1,4 @@
-ARG MYVAR=no
+ARG boolvalue=no
 #FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 FROM mcr.microsoft.com/dotnet/aspnet:3.1 AS base
 WORKDIR /app
@@ -10,6 +10,7 @@ EXPOSE 40386
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["EmployeeProject.csproj", "EmployeeProject/"]
+
 
 RUN dotnet restore "EmployeeProject/EmployeeProject.csproj"
 COPY  . "EmployeeProject/"
@@ -23,35 +24,22 @@ RUN pwd \
     
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
 
-FROM build AS sonar-yes
-RUN dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool
-ENV PATH "${PATH}:/root/.dotnet/tools"
-COPY --from=build /src/EmployeeProject/ /src/EmployeeProject
-WORKDIR /src/EmployeeProject
-
-# initialize the dotnet specific scanner
-RUN dotnet sonarscanner begin \
+RUN if [ "$boolvalue" = "Yes" ] ; then \
+    dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool \
+    && export PATH="${PATH}:/root/.dotnet/tools" \
+    && dotnet sonarscanner begin \
 	/k:testimplementation \
-    /name:testimplementation \
-    /d:sonar.host.url=http://3.109.121.132:9000/ \
-    /d:sonar.branch.name=dindlocaldb \
-     /d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3 \
-	/d:sonar.coverageReportPaths="coverage/SonarQube.xml"
+        /name:EmployeeProject \
+        /d:sonar.host.url=http://3.109.121.132:9000/ \
+        /d:sonar.branch.name=dindlocaldb \
+	/d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
+    && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage ; exit 0 \
+    && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" ; exit 0 \
+    && dotnet sonarscanner end; \
+    else \
+    echo "sonarscanning skipped"; \
+    fi
 
-## Run dotnet test setting the output on the /coverage folder
-#RUN dotnet test --filter "DisplayName!~TextCompressorTests" --collect:"XPlat Code Coverage" --results-directory ./coverage
-RUN dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage ; exit 0
-
-## Create the code coverage file in sonarqube format using the cobertura file generated from the dotnet test command
-RUN reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"
-
-## Stop scanner
-RUN dotnet sonarscanner end
-
-FROM build AS sonar-no
-COPY --from=build /src/EmployeeProject/ /src/EmployeeProject
-
-FROM sonar-${MYVAR} as build
 
 FROM build AS publish
 RUN dotnet publish "EmployeeProject.csproj" -c Release -o /app --no-restore
