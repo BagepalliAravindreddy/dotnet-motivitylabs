@@ -31,10 +31,11 @@ RUN if [ "$sonarscan" = "yes" ] ; then \
         /name:EmployeeProject \
         /d:sonar.host.url=http://3.109.121.132:9000/ \
         /d:sonar.branch.name=dindlocaldb \
+	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3\
 	/d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
-    && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage ; exit 0 \
+    && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage  \
     && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"  \
-    && dotnet sonarscanner end; \
+    && dotnet sonarscanner end 	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3 ; \
     else \
     echo "sonarscanning skipped"; \
     fi
