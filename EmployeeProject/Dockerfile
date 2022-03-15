@@ -22,7 +22,6 @@ RUN pwd \
     && cat /src/EmployeeProject/.config/dotnet-tools.json
  
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
-RUN apt-get update && apt-get install -y openjdk-11-jdk zip
 # prepare folder for sonar scanner download
 RUN mkdir /downloads/sonarqube -p
 RUN cd /downloads/sonarqube
