@@ -24,7 +24,7 @@ RUN pwd \
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
 
 RUN if [ "$sonarscan" = "yes" ] ; then \
-    dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool \
+    dotnet tool install -g dotnet-sonarscanner --version 5.5.3 && dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.1.1 \
     && export PATH="${PATH}:/root/.dotnet/tools" \
     && pwd \
     && dotnet sonarscanner begin \
