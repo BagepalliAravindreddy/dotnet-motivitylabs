@@ -24,7 +24,6 @@ RUN pwd \
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
 
 ## Install Java, because the sonarscanner needs it.
-RUN mkdir /usr/share/man/man1/
 RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y openjdk-11-jre
 # Install sonarscanner
 RUN dotnet tool install --global dotnet-sonarscanner
