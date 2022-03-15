@@ -35,8 +35,7 @@ RUN if [ "$sonarscan" = "yes" ] ; then \
 	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3\
 	/d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
     && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage  \
-    && dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=opencover \
-    && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" ; exit 0 \
+      && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" ; exit 0 \
     && dotnet sonarscanner end 	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3 ; \
     else \
     echo "sonarscanning skipped"; \
