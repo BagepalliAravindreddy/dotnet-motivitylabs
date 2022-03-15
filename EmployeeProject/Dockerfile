@@ -34,7 +34,7 @@ RUN if [ "$boolvalue" = "Yes" ] ; then \
         /d:sonar.branch.name=dindlocaldb \
 	/d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
     && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage ; exit 0 \
-    && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" ;  \
+    && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube"  \
     && dotnet sonarscanner end; \
     else \
     echo "sonarscanning skipped"; \
