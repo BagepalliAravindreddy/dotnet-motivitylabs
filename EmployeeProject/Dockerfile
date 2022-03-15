@@ -10,7 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["EmployeeProject.csproj", "EmployeeProject/"]
 
-ARG boolvalue=no
+ARG sonarscan=no
 RUN dotnet restore "EmployeeProject/EmployeeProject.csproj"
 COPY  . "EmployeeProject/"
 WORKDIR "/src/EmployeeProject"
@@ -23,7 +23,7 @@ RUN pwd \
     
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
 
-RUN if [ "$boolvalue" = "yes" ] ; then \
+RUN if [ "$sonarscan" = "yes" ] ; then \
     dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool \
     && export PATH="${PATH}:/root/.dotnet/tools" \
     && dotnet sonarscanner begin \
