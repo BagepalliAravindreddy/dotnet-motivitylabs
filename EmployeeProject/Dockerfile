@@ -22,11 +22,10 @@ RUN pwd \
     && cat /src/EmployeeProject/.config/dotnet-tools.json
     
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
-RUN dotnet tool install -g dotnet-sonarscanner --version 5.5.3 && dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.1.1 \
-ENV PATH "${PATH}:/root/.dotnet/tools" \
+RUN dotnet tool install -g dotnet-sonarscanner --version 5.5.3 && dotnet tool install -g dotnet-reportgenerator-globaltool --version 5.1.1 
+ENV PATH "${PATH}:/root/.dotnet/tools" 
 RUN if [ "$sonarscan" = "yes" ] ; then \
-    
-    	 dotnet sonarscanner begin \
+	dotnet sonarscanner begin \
 	/k:testimplementation \
         /name:EmployeeProject \
         /d:sonar.host.url=http://3.109.121.132:9000/ \
