@@ -22,16 +22,8 @@ RUN pwd \
     && cat /src/EmployeeProject/.config/dotnet-tools.json
  
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
-# prepare folder for sonar scanner download
-RUN mkdir /downloads/sonarqube -p
-RUN cd /downloads/sonarqube
-# download and extract scanner tool to /opt/sonar-scanner
-RUN wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.2.0.1873-linux.zip
-RUN unzip sonar-scanner-cli-4.2.0.1873-linux.zip
-RUN mv sonar-scanner-4.2.0.1873-linux /opt/sonar-scanner
-
+RUN apt-get update && apt-get dist-update -y && apt-get install -y openjdk-11-jre
 # install dotnet specific scanner as a global tool
-RUN dotnet tool install -g dotnet-sonarscanner
 RUN dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool 
 ENV PATH "${PATH}:/opt/sonar-scanner/bin:/root/.dotnet/tools" 
 RUN if [ "$sonarscan" = "yes" ] ; then \
@@ -43,7 +35,7 @@ RUN if [ "$sonarscan" = "yes" ] ; then \
 	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3\
 	/d:sonar.coverageReportPaths="coverage/SonarQube.xml" \
     && dotnet test --collect:"XPlat Code Coverage" --results-directory ./coverage  \
-      && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" ; exit 0 \
+      && reportgenerator "-reports:./coverage/*/coverage.cobertura.xml" "-targetdir:coverage" "-reporttypes:SonarQube" \
     && dotnet sonarscanner end 	/d:sonar.login=b4254a0e97265d862b24b657ad70a784062719a3 ; \
     else \
     echo "sonarscanning skipped"; \
