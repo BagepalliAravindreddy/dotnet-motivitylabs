@@ -22,7 +22,7 @@ RUN pwd \
     && cat /src/EmployeeProject/.config/dotnet-tools.json
  
 RUN dotnet tool run swagger tofile --output swagger.json bin/Debug/netcoreapp3.1/EmployeeProject.dll v1
-RUN apt-get update && apt-get dist-update -y && apt-get install -y openjdk-11-jre
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y openjdk-11-jre
 # install dotnet specific scanner as a global tool
 RUN dotnet tool install -g dotnet-sonarscanner && dotnet tool install -g dotnet-reportgenerator-globaltool 
 ENV PATH "${PATH}:/opt/sonar-scanner/bin:/root/.dotnet/tools" 
